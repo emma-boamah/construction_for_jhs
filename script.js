@@ -17,6 +17,8 @@ const state = {
     parallelLines: 1,
     quizIndex: 0,
     quizScore: 0,
+    relationshipType: 'complementary',
+    relationshipAngle: 30,
 };
 
 // Quiz Questions
@@ -65,6 +67,33 @@ const quizQuestions = [
             { text: 'Intersect at 90°', correct: false },
             { text: 'Sometimes intersect', correct: false }
         ]
+    },
+    {
+        question: 'Complementary angles add up to _____.',
+        options: [
+            { text: '90°', correct: true },
+            { text: '180°', correct: false },
+            { text: '45°', correct: false },
+            { text: '360°', correct: false }
+        ]
+    },
+    {
+        question: 'What is the rule for corresponding angles when two parallel lines are cut by a transversal?',
+        options: [
+            { text: 'They add up to 180°', correct: false },
+            { text: 'They are equal', correct: true },
+            { text: 'They are always 90°', correct: false },
+            { text: 'They are supplementary', correct: false }
+        ]
+    },
+    {
+        question: 'Co-interior angles on the same side of a transversal add up to _____.',
+        options: [
+            { text: '90°', correct: false },
+            { text: '180°', correct: true },
+            { text: '270°', correct: false },
+            { text: '360°', correct: false }
+        ]
     }
 ];
 
@@ -87,11 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAngleControls();
     setupPerpendicularControls();
     setupParallelControls();
+    setupRelationshipControls();
     setupConstructionControls();
     setupQuizControls();
     drawAngle();
     drawPerpendicular();
     drawParallel();
+    drawRelationship();
     updateConceptInfo();
 });
 
@@ -130,6 +161,7 @@ function switchConcept(concept) {
         if (concept === 'angles') drawAngle();
         else if (concept === 'perpendicular') drawPerpendicular();
         else if (concept === 'parallel') drawParallel();
+        else if (concept === 'relationships') drawRelationship();
         else if (concept === 'construction') drawConstruction();
         else if (concept === 'quiz') initializeQuiz();
     }, 100);
@@ -140,8 +172,9 @@ function updateConceptInfo() {
         angles: '<strong>Angles</strong> are formed by two rays sharing a common endpoint. Learn about different angle types by adjusting the slider.',
         perpendicular: '<strong>Perpendicular lines</strong> intersect at exactly 90°, marked with the symbol ⊥. They are fundamental in geometry.',
         parallel: '<strong>Parallel lines</strong> never intersect and always maintain the same distance apart, marked with ∥.',
+        relationships: '<strong>Angle relationships</strong> use fixed rules such as complementary angles summing to 90°, corresponding angles being equal, and co-interior angles summing to 180°.',
         construction: '<strong>Geometric construction</strong> is the art of drawing geometric figures using specific tools and methods. Each grid box = 1 cm.',
-        quiz: 'Test your knowledge about angles, perpendiculars, and parallel lines with this quick quiz!'
+        quiz: 'Test your knowledge about angles, perpendiculars, parallel lines, and angle relationships with this quick quiz!'
     };
 
     document.getElementById('concept-info').innerHTML = conceptInfo[state.currentConcept];
@@ -455,6 +488,239 @@ function drawParallel() {
     ctx.textAlign = 'center';
     ctx.setLineDash([]);
     ctx.fillText(`${state.parallelLines} parallel line${state.parallelLines > 1 ? 's' : ''}`, canvas.width / 2, 50);
+}
+
+// ============================================
+// ANGLE RELATIONSHIPS CONCEPT
+// ============================================
+
+function setupRelationshipControls() {
+    const typeSelect = document.getElementById('relationship-type');
+    const slider = document.getElementById('relationship-angle');
+    const resetBtn = document.getElementById('reset-relationship');
+
+    typeSelect.addEventListener('change', (e) => {
+        state.relationshipType = e.target.value;
+        updateRelationshipInfo();
+        drawRelationship();
+    });
+
+    slider.addEventListener('input', (e) => {
+        state.relationshipAngle = parseFloat(e.target.value);
+        updateRelationshipInfo();
+        drawRelationship();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        state.relationshipAngle = 30;
+        slider.value = 30;
+        updateRelationshipInfo();
+        drawRelationship();
+    });
+}
+
+function getRelationshipValues() {
+    const a = Math.max(0, Math.min(180, state.relationshipAngle));
+    const type = state.relationshipType;
+
+    switch (type) {
+        case 'complementary':
+            return {
+                label: 'Complementary Angles',
+                rule: 'a + b = 90°',
+                description: 'Complementary angles add up to 90°.',
+                a: Math.max(0, Math.min(90, a)),
+                b: Math.max(0, 90 - a),
+            };
+        case 'supplementary':
+            return {
+                label: 'Supplementary Angles',
+                rule: 'a + b = 180°',
+                description: 'Supplementary angles add up to 180°.',
+                a: Math.max(0, Math.min(180, a)),
+                b: Math.max(0, 180 - a),
+            };
+        case 'coInterior':
+            return {
+                label: 'Co-Interior Angles',
+                rule: 'a + b = 180°',
+                description: 'Interior angles on the same side of a transversal are supplementary.',
+                a: Math.max(0, Math.min(180, a)),
+                b: Math.max(0, 180 - a),
+            };
+        case 'corresponding':
+            return {
+                label: 'Corresponding Angles',
+                rule: 'a = b',
+                description: 'Corresponding angles are equal when lines are parallel.',
+                a: Math.max(0, Math.min(180, a)),
+                b: a,
+            };
+        case 'alternateInterior':
+            return {
+                label: 'Alternate Interior Angles',
+                rule: 'a = b',
+                description: 'Alternate interior angles are equal when lines are parallel.',
+                a: Math.max(0, Math.min(180, a)),
+                b: a,
+            };
+        default:
+            return {
+                label: 'Complementary Angles',
+                rule: 'a + b = 90°',
+                description: 'Complementary angles add up to 90°.',
+                a,
+                b: 90 - a,
+            };
+    }
+}
+
+function updateRelationshipInfo() {
+    const slider = document.getElementById('relationship-angle');
+    const type = state.relationshipType;
+    const typeRanges = {
+        complementary: { min: 0, max: 90 },
+        supplementary: { min: 0, max: 180 },
+        coInterior: { min: 0, max: 180 },
+        corresponding: { min: 0, max: 180 },
+        alternateInterior: { min: 0, max: 180 },
+    };
+
+    slider.min = typeRanges[type].min;
+    slider.max = typeRanges[type].max;
+    if (state.relationshipAngle < slider.min || state.relationshipAngle > slider.max) {
+        state.relationshipAngle = Math.min(slider.max, Math.max(slider.min, 30));
+    }
+    slider.value = state.relationshipAngle;
+
+    const values = getRelationshipValues();
+    document.getElementById('relationship-angle-display').textContent = `${values.a.toFixed(0)}°`;
+    document.getElementById('relationship-rule').innerHTML = `<strong>Rule:</strong> ${values.rule}`;
+    document.getElementById('relationship-description').textContent = values.description;
+    document.getElementById('relationship-summary').textContent = `If ∠A = ${values.a.toFixed(0)}°, then ∠B = ${values.b.toFixed(0)}°.`;
+}
+
+function drawRelationship() {
+    const canvas = document.getElementById('relationshipCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const values = getRelationshipValues();
+    const a = values.a;
+    const b = values.b;
+
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(values.label, canvas.width / 2, 30);
+
+    if (state.relationshipType === 'complementary' || state.relationshipType === 'supplementary') {
+        drawAnglePairDiagram(ctx, a, b, state.relationshipType);
+    } else {
+        drawParallelTransversalDiagram(ctx, a, b, state.relationshipType);
+    }
+
+    ctx.fillStyle = '#555';
+    ctx.font = '16px Arial';
+    ctx.fillText(`∠A = ${a.toFixed(0)}°`, 100, 430);
+    ctx.fillText(`∠B = ${b.toFixed(0)}°`, 370, 430);
+}
+
+function drawAnglePairDiagram(ctx, a, b, type) {
+    const cx = 250;
+    const cy = 260;
+    const radius = 140;
+
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx - 150, cy);
+    ctx.lineTo(cx + 150, cy);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, cy - 150);
+    ctx.stroke();
+
+    const angleA = (a * Math.PI) / 180;
+    const angleB = (b * Math.PI) / 180;
+
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, 70, 0, -angleA, false);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#764ba2';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, 110, -Math.PI / 2, -Math.PI / 2 + angleB, false);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('A', cx + 45, cy - 40);
+    ctx.fillStyle = '#764ba2';
+    ctx.fillText('B', cx - 40, cy - 90);
+
+    const ruleText = type === 'complementary' ? 'a + b = 90°' : 'a + b = 180°';
+    ctx.fillStyle = '#555';
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText(ruleText, 250, 185);
+}
+
+function drawParallelTransversalDiagram(ctx, a, b, type) {
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(70, 160);
+    ctx.lineTo(430, 160);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(70, 340);
+    ctx.lineTo(430, 340);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(120, 110);
+    ctx.lineTo(400, 390);
+    ctx.stroke();
+
+    const upperX = 224;
+    const upperY = 160;
+    const lowerX = 290;
+    const lowerY = 340;
+
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(upperX, upperY);
+    ctx.arc(upperX, upperY, 45, Math.PI, Math.PI + (a * Math.PI) / 180, false);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#4a90e2';
+    ctx.beginPath();
+    ctx.moveTo(lowerX, lowerY);
+    ctx.arc(lowerX, lowerY, 45, 0, -(b * Math.PI) / 180, false);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('A', upperX + 18, upperY - 18);
+    ctx.fillStyle = '#4a90e2';
+    ctx.fillText('B', lowerX + 18, lowerY + 22);
+
+    const ruleText = type === 'coInterior' ? 'a + b = 180°' : 'a = b';
+    ctx.fillStyle = '#555';
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText(ruleText, 250, 105);
 }
 
 // ============================================
