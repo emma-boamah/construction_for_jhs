@@ -2,6 +2,11 @@
 // GEOMETRY CONSTRUCTION TOOL - MAIN SCRIPT
 // ============================================
 
+// Grid and measurement constants
+const GRID_SPACING = 25; // pixels per grid box
+const CM_PER_BOX = 1; // 1 cm per grid box
+const PIXELS_PER_CM = GRID_SPACING / CM_PER_BOX; // conversion factor
+
 // State Management
 const state = {
     currentConcept: 'angles',
@@ -63,6 +68,19 @@ const quizQuestions = [
     }
 ];
 
+// ============================================
+// CONVERSION UTILITIES
+// ============================================
+
+function pixelsToCm(pixels) {
+    return (pixels / PIXELS_PER_CM).toFixed(2);
+}
+
+function formatMeasurement(pixels, label = 'AB') {
+    const cm = pixelsToCm(pixels);
+    return `${label} = ${cm} cm`;
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     setupMenuListeners();
@@ -122,7 +140,7 @@ function updateConceptInfo() {
         angles: '<strong>Angles</strong> are formed by two rays sharing a common endpoint. Learn about different angle types by adjusting the slider.',
         perpendicular: '<strong>Perpendicular lines</strong> intersect at exactly 90°, marked with the symbol ⊥. They are fundamental in geometry.',
         parallel: '<strong>Parallel lines</strong> never intersect and always maintain the same distance apart, marked with ∥.',
-        construction: '<strong>Geometric construction</strong> is the art of drawing geometric figures using specific tools and methods.',
+        construction: '<strong>Geometric construction</strong> is the art of drawing geometric figures using specific tools and methods. Each grid box = 1 cm.',
         quiz: 'Test your knowledge about angles, perpendiculars, and parallel lines with this quick quiz!'
     };
 
@@ -175,7 +193,7 @@ function updateAngleInfo() {
         description = 'This is an angle between 0° and 90°';
     } else if (angle === 90) {
         type = 'Right Angle';
-        description = 'This is exactly 90��, the angle formed by perpendicular lines';
+        description = 'This is exactly 90°, the angle formed by perpendicular lines';
     } else if (angle < 180) {
         type = 'Obtuse Angle';
         description = 'This is an angle between 90° and 180°';
@@ -384,7 +402,7 @@ function drawParallel() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const lineSpacing = 80;
+    const lineSpacing = GRID_SPACING * 3.2; // 80 pixels = 3.2 cm spacing
     const startY = 250 - (state.parallelLines * lineSpacing) / 2;
 
     // Draw parallel lines
@@ -424,7 +442,8 @@ function drawParallel() {
             ctx.fillStyle = '#666';
             ctx.font = '12px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText(`${lineSpacing}px`, 485, midY);
+            const distanceCm = pixelsToCm(lineSpacing);
+            ctx.fillText(`${distanceCm} cm`, 485, midY);
         }
 
         ctx.setLineDash([]);
@@ -486,7 +505,7 @@ function addConstructionElement(x, y) {
                 start: p1,
                 end: p2,
                 length,
-                label: `AB = ${Math.round(length)} px`
+                label: formatMeasurement(length, 'AB')
             });
             state.construction.linePoints = [];
         }
@@ -503,7 +522,7 @@ function addConstructionElement(x, y) {
                 x: state.construction.circleStart.x,
                 y: state.construction.circleStart.y,
                 r: radius,
-                label: `r = ${Math.round(radius)} px`
+                label: `r = ${pixelsToCm(radius)} cm`
             });
             state.construction.circleStart = null;
         }
@@ -525,7 +544,7 @@ function drawConstruction() {
     // Draw grid
     ctx.strokeStyle = '#f0f0f0';
     ctx.lineWidth = 1;
-    for (let i = 0; i < canvas.width; i += 25) {
+    for (let i = 0; i < canvas.width; i += GRID_SPACING) {
         ctx.beginPath();
         ctx.moveTo(i, 0);
         ctx.lineTo(i, canvas.height);
@@ -551,7 +570,7 @@ function drawConstruction() {
             const midpointX = (line.start.x + line.end.x) / 2;
             const midpointY = (line.start.y + line.end.y) / 2;
             ctx.fillStyle = '#4e4e4e';
-            ctx.font = '12px Arial';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(line.label, midpointX, midpointY - 12);
         });
@@ -568,7 +587,7 @@ function drawConstruction() {
 
             // Draw radius label near circle edge
             ctx.fillStyle = '#764ba2';
-            ctx.font = '12px Arial';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'left';
             ctx.fillText(circle.label, circle.x + circle.r + 8, circle.y + 5);
         });
