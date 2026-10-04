@@ -21,6 +21,7 @@
                     <button class="menu-btn active" data-concept="angles">📏 Angle Types</button>
                     <button class="menu-btn" data-concept="perpendicular">⊥ Perpendicular Lines</button>
                     <button class="menu-btn" data-concept="parallel">∥ Parallel Lines</button>
+                    <button class="menu-btn" data-concept="relationships">∠ Angle Relationships</button>
                     <button class="menu-btn" data-concept="construction">🛠️ Construction</button>
                     <button class="menu-btn" data-concept="quiz">✓ Quiz</button>
                 </nav>
@@ -126,6 +127,46 @@
                     <div class="parallel-info">
                         <p><strong>Parallel Lines:</strong> Two lines that never intersect and maintain equal distance</p>
                         <p><strong>Symbol:</strong> ∥</p>
+                    </div>
+                </section>
+
+                <!-- Angle Relationships Section -->
+                <section id="relationships" class="concept-section">
+                    <h2>Angle Relationships</h2>
+                    <div class="controls relationship-controls">
+                        <label for="relationship-type">Type:</label>
+                        <select id="relationship-type">
+                            <option value="complementary">Complementary</option>
+                            <option value="supplementary">Supplementary</option>
+                            <option value="coInterior">Co-Interior</option>
+                            <option value="corresponding">Corresponding</option>
+                            <option value="alternateInterior">Alternate Interior</option>
+                        </select>
+
+                        <label>Angle A: <span id="relationship-angle-display">30°</span></label>
+                        <input type="range" id="relationship-angle" min="0" max="90" value="30" class="slider">
+                        <button id="reset-relationship">Reset</button>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="relationshipCanvas" width="500" height="500"></canvas>
+                    </div>
+
+                    <div class="relationship-info-box">
+                        <p id="relationship-rule"><strong>Rule:</strong> a + b = 90°</p>
+                        <p id="relationship-description">Complementary angles add up to 90°.</p>
+                        <p id="relationship-summary">If ∠A = 30°, then ∠B = 60°.</p>
+                    </div>
+
+                    <div class="instruction-box">
+                        <h4>Relationship Rules:</h4>
+                        <ul>
+                            <li><strong>Complementary:</strong> Two angles sum to 90°.</li>
+                            <li><strong>Supplementary:</strong> Two angles sum to 180°.</li>
+                            <li><strong>Co-interior:</strong> Interior angles on the same side of a transversal sum to 180°.</li>
+                            <li><strong>Corresponding:</strong> Matching angles are equal when lines are parallel.</li>
+                            <li><strong>Alternate interior:</strong> Alternate interior angles are equal when lines are parallel.</li>
+                        </ul>
                     </div>
                 </section>
 
