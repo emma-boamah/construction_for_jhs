@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Construction Tool - Learn Angles & Lines</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 Geometry Construction Tool</h1>
+            <p class="subtitle">Learn angles, perpendiculars, and geometric constructions interactively</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <nav class="menu">
+                    <h3>Concepts</h3>
+                    <button class="menu-btn active" data-concept="angles">📏 Angle Types</button>
+                    <button class="menu-btn" data-concept="perpendicular">⊥ Perpendicular Lines</button>
+                    <button class="menu-btn" data-concept="parallel">∥ Parallel Lines</button>
+                    <button class="menu-btn" data-concept="construction">🛠️ Construction</button>
+                    <button class="menu-btn" data-concept="quiz">✓ Quiz</button>
+                </nav>
+                <div class="info-panel">
+                    <h4>Info</h4>
+                    <div id="concept-info"></div>
+                </div>
+            </aside>
+
+            <!-- Main Canvas Area -->
+            <main class="canvas-area">
+                <!-- Angles Section -->
+                <section id="angles" class="concept-section active">
+                    <h2>Types of Angles</h2>
+                    <div class="controls">
+                        <label>Angle Value: <span id="angle-display">45</span>°</label>
+                        <input type="range" id="angle-slider" min="0" max="360" value="45" class="slider">
+                        <button id="reset-angle">Reset</button>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="angleCanvas" width="500" height="500"></canvas>
+                    </div>
+                    <div class="angle-info">
+                        <p id="angle-type">Type: <strong>Acute Angle</strong></p>
+                        <p id="angle-description">This is an angle between 0° and 90°</p>
+                    </div>
+                    <div class="angle-types-grid">
+                        <div class="angle-card" data-angle="30">
+                            <h4>Acute</h4>
+                            <p>0° - 90°</p>
+                            <p class="example">Example: 30°</p>
+                        </div>
+                        <div class="angle-card" data-angle="90">
+                            <h4>Right</h4>
+                            <p>Exactly 90°</p>
+                            <p class="example">Example: 90°</p>
+                        </div>
+                        <div class="angle-card" data-angle="120">
+                            <h4>Obtuse</h4>
+                            <p>90° - 180°</p>
+                            <p class="example">Example: 120°</p>
+                        </div>
+                        <div class="angle-card" data-angle="180">
+                            <h4>Straight</h4>
+                            <p>Exactly 180°</p>
+                            <p class="example">Example: 180°</p>
+                        </div>
+                        <div class="angle-card" data-angle="270">
+                            <h4>Reflex</h4>
+                            <p>180° - 360°</p>
+                            <p class="example">Example: 270°</p>
+                        </div>
+                        <div class="angle-card" data-angle="360">
+                            <h4>Full</h4>
+                            <p>Exactly 360°</p>
+                            <p class="example">Example: 360°</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Perpendicular Lines Section -->
+                <section id="perpendicular" class="concept-section">
+                    <h2>Perpendicular Lines</h2>
+                    <div class="controls">
+                        <button id="construct-perpendicular">Construct Perpendicular</button>
+                        <button id="reset-perpendicular">Reset</button>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="perpendicularCanvas" width="500" height="500"></canvas>
+                    </div>
+                    <div class="instruction-box">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Click on the canvas to place a point on the line</li>
+                            <li>Click "Construct Perpendicular" to draw a line perpendicular to the base line</li>
+                            <li>The right angle symbol (⊥) shows where the lines meet at 90°</li>
+                        </ol>
+                    </div>
+                    <div class="perpendicular-info">
+                        <p><strong>Perpendicular Lines:</strong> Two lines that intersect at exactly 90°</p>
+                        <p><strong>Symbol:</strong> ⊥</p>
+                    </div>
+                </section>
+
+                <!-- Parallel Lines Section -->
+                <section id="parallel" class="concept-section">
+                    <h2>Parallel Lines</h2>
+                    <div class="controls">
+                        <button id="add-parallel-line">Add Parallel Line</button>
+                        <button id="reset-parallel">Reset</button>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="parallelCanvas" width="500" height="500"></canvas>
+                    </div>
+                    <div class="instruction-box">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Click "Add Parallel Line" to add lines parallel to the base line</li>
+                            <li>Parallel lines never intersect and are always the same distance apart</li>
+                            <li>They are marked with the symbol ∥</li>
+                        </ol>
+                    </div>
+                    <div class="parallel-info">
+                        <p><strong>Parallel Lines:</strong> Two lines that never intersect and maintain equal distance</p>
+                        <p><strong>Symbol:</strong> ∥</p>
+                    </div>
+                </section>
+
+                <!-- Construction Section -->
+                <section id="construction" class="concept-section">
+                    <h2>Geometric Construction Tools</h2>
+                    <div class="controls">
+                        <button id="tool-line" class="tool-btn active">Draw Line</button>
+                        <button id="tool-circle" class="tool-btn">Draw Circle</button>
+                        <button id="tool-angle" class="tool-btn">Mark Angle</button>
+                        <button id="clear-canvas" class="danger-btn">Clear All</button>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="constructionCanvas" width="500" height="500"></canvas>
+                    </div>
+                    <div class="instruction-box">
+                        <h4>Free Drawing Tool:</h4>
+                        <p>Use the tools above to create your own geometric constructions!</p>
+                        <ul>
+                            <li><strong>Draw Line:</strong> Click two points to draw a line</li>
+                            <li><strong>Draw Circle:</strong> Click center, then edge to define radius</li>
+                            <li><strong>Mark Angle:</strong> Mark angles in your construction</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Quiz Section -->
+                <section id="quiz" class="concept-section">
+                    <h2>Quick Quiz</h2>
+                    <div class="quiz-container">
+                        <div id="quiz-question"></div>
+                        <div id="quiz-options" class="quiz-options"></div>
+                        <div id="quiz-feedback" class="quiz-feedback"></div>
+                        <button id="next-question" class="btn-primary" style="display: none;">Next Question</button>
+                        <button id="restart-quiz" class="btn-primary" style="display: none;">Restart Quiz</button>
+                    </div>
+                    <div class="quiz-progress">
+                        <p>Question <span id="current-question">1</span> of <span id="total-questions">5</span></p>
+                        <div class="progress-bar">
+                            <div id="progress-fill"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Geometry Construction Tool | Made for JHS Students</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
