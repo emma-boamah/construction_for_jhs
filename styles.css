@@ -165,6 +165,22 @@ header h1 {
     font-size: 1.2em;
 }
 
+#relationship-angle-display {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+select {
+    padding: 10px 14px;
+    border: 2px solid #dfe3ff;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    font-size: 0.95em;
+    min-width: 170px;
+}
+
 .slider {
     flex: 1;
     min-width: 150px;
@@ -273,7 +289,7 @@ canvas {
 }
 
 /* Info Boxes */
-.angle-info, .perpendicular-info, .parallel-info {
+.angle-info, .perpendicular-info, .parallel-info, .relationship-info-box {
     background: #f8f9ff;
     padding: 20px;
     border-radius: 8px;
@@ -281,10 +297,21 @@ canvas {
     margin: 20px 0;
 }
 
-.angle-info p, .perpendicular-info p, .parallel-info p {
+.angle-info p, .perpendicular-info p, .parallel-info p, .relationship-info-box p {
     margin: 10px 0;
     color: #555;
     font-size: 0.95em;
+}
+
+.relationship-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.relationship-info-box {
+    background: #eef6ff;
+    border-left-color: #4a90e2;
 }
 
 /* Angle Cards Grid */
@@ -488,6 +515,11 @@ footer {
     .menu-btn {
         flex: 1;
         min-width: 150px;
+    }
+
+    .relationship-controls {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .angle-types-grid {
