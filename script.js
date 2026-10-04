@@ -175,7 +175,7 @@ function updateAngleInfo() {
         description = 'This is an angle between 0° and 90°';
     } else if (angle === 90) {
         type = 'Right Angle';
-        description = 'This is exactly 90°, the angle formed by perpendicular lines';
+        description = 'This is exactly 90��, the angle formed by perpendicular lines';
     } else if (angle < 180) {
         type = 'Obtuse Angle';
         description = 'This is an angle between 90° and 180°';
@@ -202,6 +202,7 @@ function drawAngle() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = 150;
+    const arcRadius = 70;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -242,18 +243,21 @@ function drawAngle() {
     );
     ctx.stroke();
 
-    // Draw arc representing the angle
+    // Draw the angle arc between the two rays, inside the angle
     ctx.strokeStyle = '#ff6b6b';
     ctx.fillStyle = 'rgba(255, 107, 107, 0.1)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 40, -Math.PI / 2, -Math.PI / 2 + radians, true);
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, arcRadius, 0, -radians, false);
+    ctx.closePath();
     ctx.stroke();
     ctx.fill();
 
-    // Add angle label
-    const labelX = centerX + 60 * Math.cos(radians / 2 - Math.PI / 2);
-    const labelY = centerY - 60 * Math.sin(radians / 2 - Math.PI / 2);
+    // Add angle label inside the arc
+    const labelAngle = -radians / 2;
+    const labelX = centerX + (arcRadius + 22) * Math.cos(labelAngle);
+    const labelY = centerY + (arcRadius + 22) * Math.sin(labelAngle);
     ctx.fillStyle = '#ff6b6b';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
@@ -469,13 +473,21 @@ function setupConstructionControls() {
 
 function addConstructionElement(x, y) {
     const tool = state.currentTool;
-    
+
     if (tool === 'line') {
         if (!state.construction.linePoints) state.construction.linePoints = [];
         state.construction.linePoints.push({ x, y });
         if (state.construction.linePoints.length === 2) {
             state.construction.lines = state.construction.lines || [];
-            state.construction.lines.push([...state.construction.linePoints]);
+            const p1 = state.construction.linePoints[0];
+            const p2 = state.construction.linePoints[1];
+            const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            state.construction.lines.push({
+                start: p1,
+                end: p2,
+                length,
+                label: `AB = ${Math.round(length)} px`
+            });
             state.construction.linePoints = [];
         }
     } else if (tool === 'circle') {
@@ -490,7 +502,8 @@ function addConstructionElement(x, y) {
             state.construction.circles.push({
                 x: state.construction.circleStart.x,
                 y: state.construction.circleStart.y,
-                r: radius
+                r: radius,
+                label: `r = ${Math.round(radius)} px`
             });
             state.construction.circleStart = null;
         }
@@ -530,9 +543,17 @@ function drawConstruction() {
         ctx.lineWidth = 3;
         state.construction.lines.forEach(line => {
             ctx.beginPath();
-            ctx.moveTo(line[0].x, line[0].y);
-            ctx.lineTo(line[1].x, line[1].y);
+            ctx.moveTo(line.start.x, line.start.y);
+            ctx.lineTo(line.end.x, line.end.y);
             ctx.stroke();
+
+            // Draw line length label around midpoint
+            const midpointX = (line.start.x + line.end.x) / 2;
+            const midpointY = (line.start.y + line.end.y) / 2;
+            ctx.fillStyle = '#4e4e4e';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(line.label, midpointX, midpointY - 12);
         });
     }
 
@@ -544,6 +565,12 @@ function drawConstruction() {
             ctx.beginPath();
             ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
             ctx.stroke();
+
+            // Draw radius label near circle edge
+            ctx.fillStyle = '#764ba2';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(circle.label, circle.x + circle.r + 8, circle.y + 5);
         });
     }
 
@@ -557,7 +584,7 @@ function drawConstruction() {
         });
     }
 
-    // Draw points
+    // Draw live line points
     if (state.construction.linePoints && state.construction.linePoints.length > 0) {
         ctx.fillStyle = '#2ecc71';
         state.construction.linePoints.forEach(point => {
