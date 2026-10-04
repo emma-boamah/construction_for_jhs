@@ -65,9 +65,10 @@ header h1 {
 }
 
 .menu h3 {
-    color: #667eea;
+    color: #333;
     font-size: 1.1em;
     margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .menu-btn {
@@ -80,6 +81,7 @@ header h1 {
     font-weight: 500;
     transition: all 0.3s ease;
     text-align: left;
+    color: #333;
 }
 
 .menu-btn:hover {
@@ -102,9 +104,10 @@ header h1 {
 }
 
 .info-panel h4 {
-    color: #667eea;
+    color: #333;
     margin-bottom: 15px;
     font-size: 1em;
+    font-weight: 600;
 }
 
 #concept-info {
